@@ -47,7 +47,7 @@ class VideoProcess(threading.Thread):
             path = msg['path']
             print('process ' + path)
             video = VideoFile(path=path)
-            if not video.is_cache_exist():
+            if (not video.is_cache_exist()) and (video.get_score() >= 0):
                 video.grab_small_frames()
                 video.save_cache()
 
@@ -353,7 +353,7 @@ class VideoPlayer:
         self.graph.Erase()
         frame = self.selected_video.grab_frame(pos)
         if frame is not None:
-            self.graph.DrawImage(data=frame, location=(0, 480), color='black', font=None, angle=0)
+            self.graph.DrawImage(data=frame, location=(0, 480))
         self.graph.DrawText(self.selected_video.path, location=(0, 500), color='white',
                             text_location=sg.TEXT_LOCATION_TOP_LEFT)
 
@@ -372,10 +372,7 @@ class VideoPlayer:
                 if frame is not None:
                     width = size[0]
                     height = size[1]
-                    self.graph.DrawImage(data=frame,
-                                         location=(i * width + 10, 480 - j * (height + 10)),
-                                         color='black',
-                                         font=None, angle=0)
+                    self.graph.DrawImage(data=frame,  location=(i * width + 10, 480 - j * (height + 10)))
 
         self.graph.DrawText(self.selected_video.path, location=(0, 500), color='white',
                             text_location=sg.TEXT_LOCATION_TOP_LEFT)
@@ -391,10 +388,11 @@ class VideoPlayer:
         num = fd.detect(frame)
         if num > 0:
             img_bytes = cv2.imencode('.png', frame)[1].tobytes()
-            self.graph.DrawImage(data=img_bytes, location=(10, 480), color='black', font=None, angle=0)
+            self.graph.DrawImage(data=img_bytes, location=(10, 480))
 
 
 if __name__ == '__main__':
+    os.chdir("../workdir/")  
     _video_processor.start()
     VideoPlayer().run()
     _video_processor.stop()

@@ -214,6 +214,9 @@ class VideoFile:
         repo = Repository(cache_repo)
         repo.update_score(self.uid, score)
 
+    def get_score(self):
+        return self.score
+
     def modify_path(self, path):
         self.path = path
         repo = Repository(cache_repo)
